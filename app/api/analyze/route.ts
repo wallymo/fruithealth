@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { analyzeFruit } from "@/lib/claude";
+import { analyzeFruit } from "@/lib/glm";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
