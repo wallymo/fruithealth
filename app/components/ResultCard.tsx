@@ -1,17 +1,47 @@
 "use client";
 
-import type { FruitReport, Verdict } from "@/lib/types";
+import type { FruitReport, Ripeness, Verdict } from "@/lib/types";
 
-const verdictStyle: Record<Verdict, string> = {
-  buy: "bg-buy text-white",
-  skip: "bg-skip text-white",
-  return: "bg-ret text-white",
+const verdictBg: Record<Verdict, string> = {
+  buy: "bg-buy",
+  skip: "bg-skip",
+  return: "bg-ret",
 };
 
-const verdictLabel: Record<Verdict, string> = {
-  buy: "Buy",
-  skip: "Skip",
-  return: "Return",
+const verdictWord: Record<Verdict, string> = {
+  buy: "BUY",
+  skip: "SKIP",
+  return: "RETURN",
+};
+
+function eatWhenLine(r: FruitReport): string {
+  if (r.not_a_fruit) return "Couldn't make out a fruit — try again.";
+  if (r.verdict === "return") return "Don't eat — take it back.";
+  if (r.verdict === "skip") return "Not worth buying.";
+
+  const d = r.eat_within_days;
+  const days = d && d > 0 ? `${d} day${d === 1 ? "" : "s"}` : null;
+
+  switch (r.ripeness) {
+    case "underripe":
+      return "Not ripe yet — will ripen on the counter.";
+    case "ripe":
+      return days ? `Ripe — eat within ${days}.` : "Ripe and ready.";
+    case "peak":
+      return days ? `Peak — eat within ${days}.` : "Peak — eat soon.";
+    case "overripe":
+      return "Overripe — use very soon.";
+    case "spoiling":
+      return "Going off — use today or skip.";
+  }
+}
+
+const ripenessLabel: Record<Ripeness, string> = {
+  underripe: "Underripe",
+  ripe: "Ripe",
+  peak: "Peak",
+  overripe: "Overripe",
+  spoiling: "Spoiling",
 };
 
 export default function ResultCard({
@@ -23,87 +53,63 @@ export default function ResultCard({
 }) {
   return (
     <div className="rounded-2xl bg-white dark:bg-neutral-900 shadow-sm overflow-hidden">
+      <div
+        className={`${verdictBg[result.verdict]} text-white px-5 py-6 text-center`}
+      >
+        <div className="text-5xl font-black tracking-tight leading-none">
+          {verdictWord[result.verdict]}
+        </div>
+        <div className="mt-2 text-lg font-medium">{eatWhenLine(result)}</div>
+        {!result.not_a_fruit && (
+          <div className="mt-1 text-sm opacity-90">
+            {result.fruit}
+            {" · "}
+            {ripenessLabel[result.ripeness]}
+          </div>
+        )}
+      </div>
+
       {thumbnailDataUrl && (
         <img
           src={thumbnailDataUrl}
           alt={result.fruit}
-          className="w-full h-48 object-cover"
+          className="w-full h-40 object-cover"
         />
       )}
-      <div className="p-4 space-y-3">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <div className="text-xs uppercase tracking-wide text-neutral-500">
-              {result.fruit}
-            </div>
-            <div className="text-lg font-semibold mt-0.5">
+
+      {!result.not_a_fruit && (
+        <div className="p-4 space-y-3">
+          {result.headline && (
+            <p className="text-sm text-neutral-700 dark:text-neutral-200">
               {result.headline}
-            </div>
-          </div>
-          <span
-            className={`shrink-0 rounded-full px-3 py-1 text-sm font-semibold ${verdictStyle[result.verdict]}`}
-          >
-            {verdictLabel[result.verdict]}
-          </span>
-        </div>
+            </p>
+          )}
 
-        {!result.not_a_fruit && (
-          <div className="flex flex-wrap gap-2 text-xs">
-            <Chip label={`Ripeness: ${result.ripeness}`} />
-            <Chip
-              label={
-                result.seasonality.in_season ? "In season" : "Out of season"
-              }
-              tone={result.seasonality.in_season ? "good" : "warn"}
-            />
-            {result.eat_within_days !== null && (
-              <Chip label={`Eat within ${result.eat_within_days}d`} />
-            )}
-          </div>
-        )}
+          {result.quality_notes.length > 0 && (
+            <ul className="text-sm text-neutral-700 dark:text-neutral-200 space-y-1 list-disc pl-5">
+              {result.quality_notes.map((n, i) => (
+                <li key={i}>{n}</li>
+              ))}
+            </ul>
+          )}
 
-        {result.seasonality.note && (
-          <p className="text-sm text-neutral-600 dark:text-neutral-300">
-            {result.seasonality.note}
+          {result.seasonality.note && (
+            <p className="text-xs text-neutral-500">
+              {result.seasonality.in_season ? "🟢 " : "🟡 "}
+              {result.seasonality.note}
+            </p>
+          )}
+
+          {result.storage_tips && (
+            <p className="text-xs text-neutral-500">{result.storage_tips}</p>
+          )}
+
+          <p className="text-[11px] text-neutral-400 pt-2 border-t border-neutral-100 dark:border-neutral-800">
+            AI estimate — trust your eyes. Confidence{" "}
+            {Math.round(result.confidence * 100)}%.
           </p>
-        )}
-
-        {result.quality_notes.length > 0 && (
-          <ul className="text-sm text-neutral-700 dark:text-neutral-200 space-y-1 list-disc pl-5">
-            {result.quality_notes.map((n, i) => (
-              <li key={i}>{n}</li>
-            ))}
-          </ul>
-        )}
-
-        {result.storage_tips && !result.not_a_fruit && (
-          <p className="text-sm text-neutral-500">{result.storage_tips}</p>
-        )}
-
-        <p className="text-[11px] text-neutral-400 pt-1 border-t border-neutral-100 dark:border-neutral-800">
-          AI estimate — trust your eyes. Confidence {Math.round(result.confidence * 100)}%.
-        </p>
-      </div>
+        </div>
+      )}
     </div>
-  );
-}
-
-function Chip({
-  label,
-  tone = "neutral",
-}: {
-  label: string;
-  tone?: "neutral" | "good" | "warn";
-}) {
-  const cls =
-    tone === "good"
-      ? "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200"
-      : tone === "warn"
-        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200"
-        : "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200";
-  return (
-    <span className={`rounded-full px-2.5 py-1 font-medium ${cls}`}>
-      {label}
-    </span>
   );
 }
