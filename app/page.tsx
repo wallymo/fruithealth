@@ -5,7 +5,7 @@ import Link from "next/link";
 import CaptureButton from "./components/CaptureButton";
 import RegionPicker from "./components/RegionPicker";
 import ResultCard from "./components/ResultCard";
-import { processImage } from "@/lib/image";
+import { ImageQualityError, processImage } from "@/lib/image";
 import { getRegion, setRegion, type Region } from "@/lib/regions";
 import { getLastScan, saveScan } from "@/lib/history";
 import type { FruitReport, Scan } from "@/lib/types";
@@ -66,7 +66,11 @@ export default function Home() {
       await saveScan(scan);
       setLatest(scan);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "something went wrong");
+      if (err instanceof ImageQualityError) {
+        setError(err.message);
+      } else {
+        setError(err instanceof Error ? err.message : "something went wrong");
+      }
     } finally {
       setBusy(false);
     }

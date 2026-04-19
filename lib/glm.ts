@@ -1,10 +1,21 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { RESULT_SCHEMA, SYSTEM_PROMPT } from "./prompt";
-import type { FruitReport } from "./types";
+import {
+  IDENTIFY_PROMPT,
+  IDENTIFY_SCHEMA,
+  JUDGE_PROMPT,
+  RESULT_SCHEMA,
+} from "./prompt";
+import {
+  formatCueCard,
+  getSeasonality,
+  normalizeFruitKey,
+} from "./knowledge";
+import type { Form, FruitReport } from "./types";
 
 const MODEL = process.env.GLM_MODEL ?? "glm-5.1";
 const BASE_URL = process.env.GLM_BASE_URL ?? "https://api.z.ai/api/anthropic";
-const TOOL_NAME = "report_fruit";
+const IDENTIFY_TOOL = "identify_fruit";
+const REPORT_TOOL = "report_fruit";
 
 function makeClient() {
   const apiKey = process.env.GLM_API_KEY;
@@ -19,22 +30,30 @@ export interface AnalyzeArgs {
   isoDate: string;
 }
 
-export async function analyzeFruit(args: AnalyzeArgs): Promise<FruitReport> {
-  const client = makeClient();
+interface Identification {
+  fruit_key: string;
+  fruit_display: string;
+  form: Form;
+  not_a_fruit: boolean;
+  confidence: number;
+}
 
-  const response = await client.messages.create({
+async function identifyFruit(
+  client: Anthropic,
+  args: AnalyzeArgs,
+): Promise<Identification> {
+  const resp = await client.messages.create({
     model: MODEL,
-    max_tokens: 1024,
-    system: SYSTEM_PROMPT,
+    max_tokens: 256,
+    system: IDENTIFY_PROMPT,
     tools: [
       {
-        name: TOOL_NAME,
-        description:
-          "Report your analysis of the fruit in the photo so the shopper can act on it.",
-        input_schema: RESULT_SCHEMA as unknown as Anthropic.Tool.InputSchema,
+        name: IDENTIFY_TOOL,
+        description: "Return a structured identification of the fruit.",
+        input_schema: IDENTIFY_SCHEMA as unknown as Anthropic.Tool.InputSchema,
       },
     ],
-    tool_choice: { type: "tool", name: TOOL_NAME },
+    tool_choice: { type: "tool", name: IDENTIFY_TOOL },
     messages: [
       {
         role: "user",
@@ -47,34 +66,109 @@ export async function analyzeFruit(args: AnalyzeArgs): Promise<FruitReport> {
               data: args.imageBase64,
             },
           },
-          {
-            type: "text",
-            text: `Region: ${args.region}\nToday: ${args.isoDate}\n\nEvaluate this fruit.`,
-          },
+          { type: "text", text: "Identify this." },
         ],
       },
     ],
   });
 
-  const toolUse = response.content.find((b) => b.type === "tool_use");
-  if (toolUse && toolUse.type === "tool_use") {
-    return toolUse.input as FruitReport;
+  const toolUse = resp.content.find((b) => b.type === "tool_use");
+  if (!toolUse || toolUse.type !== "tool_use") {
+    throw new Error("identify: no tool_use block");
   }
-
-  const textBlock = response.content.find((b) => b.type === "text");
-  if (textBlock && textBlock.type === "text") {
-    return JSON.parse(extractJSON(textBlock.text)) as FruitReport;
-  }
-
-  throw new Error("GLM returned no usable tool_use or text content");
+  return toolUse.input as Identification;
 }
 
-function extractJSON(s: string): string {
-  const stripped = s.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
-  const fenced = stripped.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const candidate = fenced ? fenced[1] : stripped;
-  const start = candidate.indexOf("{");
-  const end = candidate.lastIndexOf("}");
-  if (start === -1 || end === -1 || end < start) return candidate;
-  return candidate.slice(start, end + 1);
+async function judgeFruit(
+  client: Anthropic,
+  args: AnalyzeArgs,
+  id: Identification,
+): Promise<FruitReport> {
+  const normalizedKey =
+    normalizeFruitKey(id.fruit_key) ?? normalizeFruitKey(id.fruit_display);
+  const cueCard = normalizedKey ? formatCueCard(normalizedKey) : null;
+  const season = normalizedKey
+    ? getSeasonality(normalizedKey, args.region, args.isoDate)
+    : null;
+
+  const knowledge = [
+    `Today: ${args.isoDate}`,
+    `Region: ${args.region}`,
+    `Model's identification: ${id.fruit_display} (canonical key: ${id.fruit_key}, form: ${id.form}, id_confidence: ${id.confidence.toFixed(2)})`,
+    cueCard ? `\nKnowledge card for this fruit:\n${cueCard}` : "\nNo knowledge card available for this fruit — rely on general knowledge but stay conservative.",
+    season
+      ? `\nSeasonality for this region this month: ${season.label} (in_season=${season.in_season}).\nUse this as the seasonality note: "${season.note}"`
+      : "\nNo seasonality data for this fruit — infer conservatively from the region and date.",
+  ].join("\n");
+
+  const resp = await client.messages.create({
+    model: MODEL,
+    max_tokens: 1024,
+    system: JUDGE_PROMPT,
+    tools: [
+      {
+        name: REPORT_TOOL,
+        description:
+          "Report your final fruit-quality analysis for the shopper.",
+        input_schema: RESULT_SCHEMA as unknown as Anthropic.Tool.InputSchema,
+      },
+    ],
+    tool_choice: { type: "tool", name: REPORT_TOOL },
+    messages: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "image",
+            source: {
+              type: "base64",
+              media_type: args.mediaType,
+              data: args.imageBase64,
+            },
+          },
+          { type: "text", text: knowledge + "\n\nEvaluate this fruit." },
+        ],
+      },
+    ],
+  });
+
+  const toolUse = resp.content.find((b) => b.type === "tool_use");
+  if (!toolUse || toolUse.type !== "tool_use") {
+    throw new Error("judge: no tool_use block");
+  }
+  const report = toolUse.input as FruitReport;
+
+  if (season) {
+    report.seasonality.in_season = season.in_season;
+    if (!report.seasonality.note) report.seasonality.note = season.note;
+  }
+
+  return report;
+}
+
+function notAFruitReport(id: Identification): FruitReport {
+  return {
+    fruit: id.fruit_display || "unknown",
+    form: id.form ?? "single",
+    verdict: "skip",
+    confidence: Math.max(id.confidence, 0.9),
+    headline: "Can't make out a fruit — try a clearer, closer photo.",
+    ripeness: "ripe",
+    quality_notes: [],
+    seasonality: { in_season: false, note: "" },
+    storage_tips: "",
+    eat_within_days: null,
+    not_a_fruit: true,
+  };
+}
+
+export async function analyzeFruit(args: AnalyzeArgs): Promise<FruitReport> {
+  const client = makeClient();
+  const id = await identifyFruit(client, args);
+
+  if (id.not_a_fruit || id.confidence < 0.3) {
+    return notAFruitReport(id);
+  }
+
+  return judgeFruit(client, args, id);
 }

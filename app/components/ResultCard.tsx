@@ -79,6 +79,10 @@ export default function ResultCard({
         {result.storage_tips && !result.not_a_fruit && (
           <p className="text-sm text-neutral-500">{result.storage_tips}</p>
         )}
+
+        <p className="text-[11px] text-neutral-400 pt-1 border-t border-neutral-100 dark:border-neutral-800">
+          AI estimate — trust your eyes. Confidence {Math.round(result.confidence * 100)}%.
+        </p>
       </div>
     </div>
   );

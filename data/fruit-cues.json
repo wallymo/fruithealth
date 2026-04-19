@@ -1,0 +1,362 @@
+{
+  "apple": {
+    "display": "apple",
+    "aliases": ["apples"],
+    "cues": {
+      "underripe": "bright green cast, very firm, starchy smell",
+      "ripe": "full cultivar color, firm, light floral scent at stem",
+      "peak": "rich color, gives barely under pressure, fragrant",
+      "overripe": "soft spots, wrinkled skin, mealy feel",
+      "spoiling": "brown rot patches, mold, oozing"
+    },
+    "defects": ["bruises (dark soft spots)", "scab (rough dark patches)", "punctures or splits"]
+  },
+  "pear": {
+    "display": "pear",
+    "aliases": ["pears", "bartlett", "anjou", "bosc"],
+    "cues": {
+      "underripe": "hard neck, still green (or bright yellow-green for Bartlett)",
+      "ripe": "neck gives slightly to gentle pressure; skin color deepened",
+      "peak": "neck yields easily; sweet aroma; a little soft at the stem",
+      "overripe": "mushy at stem, wrinkled",
+      "spoiling": "brown rot, mold, leaking"
+    },
+    "defects": ["stem-end rot", "deep bruises", "punctures"]
+  },
+  "banana": {
+    "display": "banana",
+    "aliases": ["bananas", "banana bunch"],
+    "cues": {
+      "underripe": "mostly green peel, firm, no give",
+      "ripe": "yellow with green tips, slight give",
+      "peak": "fully yellow with small brown sugar spots, sweet aroma",
+      "overripe": "mostly brown peel, very soft, intense sweetness",
+      "spoiling": "black peel, mushy, fermented smell, leaking"
+    },
+    "defects": ["stem-end blackening", "deep bruises (brown-black flesh under)", "split skin"]
+  },
+  "orange": {
+    "display": "orange",
+    "aliases": ["oranges", "navel", "valencia"],
+    "cues": {
+      "underripe": "greenish patches, very firm, low aroma",
+      "ripe": "full orange color, heavy for size, firm with slight give",
+      "peak": "deep color, fragrant at stem, yields to squeeze",
+      "overripe": "soft, dull skin, slight off-smell",
+      "spoiling": "mold (blue or white fuzz), soft brown spots, leaking"
+    },
+    "defects": ["blue/white mold", "soft spots", "dry papery skin"]
+  },
+  "lemon": {
+    "display": "lemon",
+    "aliases": ["lemons"],
+    "cues": {
+      "underripe": "green patches, hard, very little aroma",
+      "ripe": "bright yellow, firm, light citrus scent",
+      "peak": "deep yellow, slight give, fragrant",
+      "overripe": "soft, dull yellow, shriveled near stem",
+      "spoiling": "mold, brown rot, dry out"
+    },
+    "defects": ["blue/green mold", "soft spots", "scarred rind"]
+  },
+  "lime": {
+    "display": "lime",
+    "aliases": ["limes"],
+    "cues": {
+      "underripe": "dark green, very hard, no aroma",
+      "ripe": "medium green, slight give, glossy skin",
+      "peak": "yellow-green cast, soft enough to squeeze juice easily",
+      "overripe": "yellow, wrinkled, dull",
+      "spoiling": "mold, brown rot"
+    },
+    "defects": ["dry papery skin", "mold", "browning"]
+  },
+  "grapefruit": {
+    "display": "grapefruit",
+    "aliases": ["grapefruits"],
+    "cues": {
+      "underripe": "green-tinged skin, very firm, low aroma",
+      "ripe": "yellow or pink blush, heavy for size, slight give",
+      "peak": "deep color, fragrant, yields gently",
+      "overripe": "soft, dull",
+      "spoiling": "mold, soft spots, off smell"
+    },
+    "defects": ["mold", "dry rind"]
+  },
+  "mandarin": {
+    "display": "mandarin",
+    "aliases": ["tangerine", "clementine", "satsuma", "cuties"],
+    "cues": {
+      "underripe": "greenish, very firm",
+      "ripe": "bright orange, slight give, easy to peel",
+      "peak": "deep orange, fragrant, skin slightly loose",
+      "overripe": "soft, very loose skin, juice pooling",
+      "spoiling": "mold, leaking, off smell"
+    },
+    "defects": ["mold at stem", "soft collapsed fruit"]
+  },
+  "strawberry": {
+    "display": "strawberry",
+    "aliases": ["strawberries"],
+    "cues": {
+      "underripe": "white shoulders near stem, pale red body",
+      "ripe": "uniformly deep red all the way to stem, glossy",
+      "peak": "deep red, fragrant, firm but juicy",
+      "overripe": "dark red, soft, bleeding juice",
+      "spoiling": "white fuzzy mold, mushy, fermented smell"
+    },
+    "defects": ["white or gray mold (very common in clamshells)", "bruising", "bleeding juice in the package"]
+  },
+  "blueberry": {
+    "display": "blueberry",
+    "aliases": ["blueberries"],
+    "cues": {
+      "underripe": "red or pink tint, firm",
+      "ripe": "deep blue-purple with silvery bloom, firm",
+      "peak": "uniform deep blue, plump, slight give",
+      "overripe": "dull, wrinkled, very soft",
+      "spoiling": "mold in the clamshell, leaking juice"
+    },
+    "defects": ["mold in packaging", "shriveled berries", "juice at the bottom of the clamshell"]
+  },
+  "raspberry": {
+    "display": "raspberry",
+    "aliases": ["raspberries"],
+    "cues": {
+      "underripe": "light pink, hard, hollow feel",
+      "ripe": "deep red (or golden for yellow var), plump, slightly soft",
+      "peak": "deep red, fragrant, falls off the stem",
+      "overripe": "dark red, mushy, bleeding",
+      "spoiling": "white/gray mold, collapsed fruit, leaking juice"
+    },
+    "defects": ["mold (very common)", "juice bleeding through the package"]
+  },
+  "blackberry": {
+    "display": "blackberry",
+    "aliases": ["blackberries"],
+    "cues": {
+      "underripe": "red or purple (not fully black), hard, sour",
+      "ripe": "fully black, plump, firm with slight give",
+      "peak": "deep black, glossy, slight give",
+      "overripe": "dull, shrunken, very soft",
+      "spoiling": "mold, leaking, fermented smell"
+    },
+    "defects": ["mold", "leaking juice"]
+  },
+  "cranberry": {
+    "display": "cranberry",
+    "aliases": ["cranberries"],
+    "cues": {
+      "underripe": "white or pink, very hard",
+      "ripe": "deep red, firm, bouncy when dropped",
+      "peak": "deep red, very firm",
+      "overripe": "dark red, soft",
+      "spoiling": "soft, leaking, mold"
+    },
+    "defects": ["soft berries", "dark spots", "mold"]
+  },
+  "peach": {
+    "display": "peach",
+    "aliases": ["peaches"],
+    "cues": {
+      "underripe": "hard, pale yellow or green undertone",
+      "ripe": "gives slightly under pressure, fragrant at stem",
+      "peak": "gives easily, very fragrant, deep red blush with yellow/cream",
+      "overripe": "wrinkled, bruises easily, very soft",
+      "spoiling": "brown rot, mold, leaking"
+    },
+    "defects": ["brown rot (expanding brown circles)", "deep bruises", "splits"]
+  },
+  "plum": {
+    "display": "plum",
+    "aliases": ["plums"],
+    "cues": {
+      "underripe": "very firm, dull color, no give",
+      "ripe": "deep color with silvery bloom, slight give at stem",
+      "peak": "soft all over, fragrant, juicy when pressed",
+      "overripe": "wrinkled, very soft",
+      "spoiling": "leaking juice, mold, off smell"
+    },
+    "defects": ["splits", "bruises", "mold at stem"]
+  },
+  "nectarine": {
+    "display": "nectarine",
+    "aliases": ["nectarines"],
+    "cues": {
+      "underripe": "hard, pale, no aroma",
+      "ripe": "slight give, fragrant, smooth deep color",
+      "peak": "gives easily, very fragrant",
+      "overripe": "wrinkled, very soft",
+      "spoiling": "brown rot, mold"
+    },
+    "defects": ["brown rot", "bruises", "splits"]
+  },
+  "apricot": {
+    "display": "apricot",
+    "aliases": ["apricots"],
+    "cues": {
+      "underripe": "firm, pale or green-tinged",
+      "ripe": "deep orange, slight give, sweet aroma",
+      "peak": "soft with a faint blush, fragrant",
+      "overripe": "wrinkled, mushy",
+      "spoiling": "mold, leaking"
+    },
+    "defects": ["brown rot", "soft bruises"]
+  },
+  "cherry": {
+    "display": "cherry",
+    "aliases": ["cherries"],
+    "cues": {
+      "underripe": "pale red, firm, stem green and fresh",
+      "ripe": "deep red or mahogany, firm plump flesh, green stem",
+      "peak": "very dark red, glossy, fragrant, stem still green",
+      "overripe": "dull skin, soft, stem brown/dry",
+      "spoiling": "mold at stem, leaking, fermented smell"
+    },
+    "defects": ["brown dried stems (old)", "splits", "soft spots"]
+  },
+  "grape": {
+    "display": "grape",
+    "aliases": ["grapes"],
+    "cues": {
+      "underripe": "tart, firmly attached to stem, pale",
+      "ripe": "full cultivar color, firm, still attached to green stems",
+      "peak": "deep color, fragrant, firm attachment",
+      "overripe": "wrinkled, falling off the stem, brown stems",
+      "spoiling": "mold (fuzzy white/gray), leaking juice"
+    },
+    "defects": ["loose berries (shatter)", "brown dry stems", "mold"]
+  },
+  "watermelon": {
+    "display": "watermelon",
+    "aliases": ["watermelons"],
+    "cues": {
+      "underripe": "white-green field spot, shiny skin, green tendril",
+      "ripe": "creamy-yellow field spot, dull skin, hollow thump sound",
+      "peak": "deep yellow/orange field spot, dried tendril at stem, heavy for size",
+      "overripe": "very dull, soft spots, sloshing sound",
+      "spoiling": "soft mushy patches, oozing, off smell"
+    },
+    "defects": ["soft patches", "punctures", "splits"]
+  },
+  "cantaloupe": {
+    "display": "cantaloupe",
+    "aliases": ["muskmelon"],
+    "cues": {
+      "underripe": "green under the netting, no aroma, hard",
+      "ripe": "tan-cream under the netting, slight give at stem end, fragrant",
+      "peak": "strong sweet aroma, gives under thumb pressure at stem",
+      "overripe": "very soft, overly strong smell",
+      "spoiling": "mushy spots, mold, leaking"
+    },
+    "defects": ["mushy soft spots", "mold at stem end", "bruises"]
+  },
+  "honeydew": {
+    "display": "honeydew",
+    "aliases": ["honeydew melon"],
+    "cues": {
+      "underripe": "pale green, shiny hard skin",
+      "ripe": "creamy-yellow skin, slightly waxy feel, slight give at stem",
+      "peak": "pale yellow, fragrant, soft at stem",
+      "overripe": "wrinkled, very soft",
+      "spoiling": "mushy spots, off smell"
+    },
+    "defects": ["mushy spots", "mold"]
+  },
+  "pineapple": {
+    "display": "pineapple",
+    "aliases": ["pineapples"],
+    "cues": {
+      "underripe": "green skin, stiff leaves, very firm",
+      "ripe": "yellow-gold at the base, inner leaves pull out with moderate tug, fragrant",
+      "peak": "deeply golden, strong sweet aroma, slight give",
+      "overripe": "very soft, dull brown patches, fermented smell",
+      "spoiling": "mushy base, mold, leaking"
+    },
+    "defects": ["brown mushy patches", "mold at base", "dried-out leaves"]
+  },
+  "mango": {
+    "display": "mango",
+    "aliases": ["mangos", "mangoes"],
+    "cues": {
+      "underripe": "firm, green skin, no aroma",
+      "ripe": "gives to gentle pressure, fragrant at stem, skin turning red/yellow (variety-dependent)",
+      "peak": "very fragrant, soft all over, full color",
+      "overripe": "wrinkled skin, mushy",
+      "spoiling": "black rot, mold, fermented smell"
+    },
+    "defects": ["black rot at stem", "deep bruises", "splits"]
+  },
+  "papaya": {
+    "display": "papaya",
+    "aliases": ["papayas"],
+    "cues": {
+      "underripe": "green skin, very hard",
+      "ripe": "orange-yellow skin, gives to pressure",
+      "peak": "mostly yellow/orange, soft, fragrant",
+      "overripe": "wrinkled, very soft",
+      "spoiling": "mushy, black spots, fermented smell"
+    },
+    "defects": ["black mushy spots", "mold"]
+  },
+  "kiwi": {
+    "display": "kiwi",
+    "aliases": ["kiwis", "kiwifruit"],
+    "cues": {
+      "underripe": "very firm, no give",
+      "ripe": "gives slightly to thumb pressure",
+      "peak": "soft but not mushy, fragrant",
+      "overripe": "wrinkled, mushy",
+      "spoiling": "leaking, off smell"
+    },
+    "defects": ["wrinkled skin", "soft collapsed fruit"]
+  },
+  "pomegranate": {
+    "display": "pomegranate",
+    "aliases": ["pomegranates"],
+    "cues": {
+      "underripe": "pale red, perfectly round, hard",
+      "ripe": "deep red, angular/squarish shape, heavy for size",
+      "peak": "deeply colored, heavy, slight brown patina acceptable",
+      "overripe": "wrinkled skin, light for size",
+      "spoiling": "mold, soft collapsed fruit"
+    },
+    "defects": ["cracks", "mold", "very light weight (dried out inside)"]
+  },
+  "fig": {
+    "display": "fig",
+    "aliases": ["figs"],
+    "cues": {
+      "underripe": "firm, upright stem, no aroma",
+      "ripe": "drooping stem, soft, small drop of nectar at the bottom eye",
+      "peak": "very soft, fragrant, split skin acceptable",
+      "overripe": "collapsed, sour smell",
+      "spoiling": "mold, fermented smell"
+    },
+    "defects": ["mold", "fermented smell", "leaking"]
+  },
+  "avocado": {
+    "display": "avocado",
+    "aliases": ["avocados", "hass"],
+    "cues": {
+      "underripe": "bright green, rock hard",
+      "ripe": "dark green-purple (Hass), yields to gentle pressure in the palm",
+      "peak": "very dark, soft at the stem, stem pops off to reveal green underneath",
+      "overripe": "very soft, stem reveals brown underneath",
+      "spoiling": "black mushy spots, off smell"
+    },
+    "defects": ["brown under the stem", "dark stringy flesh (cut open)", "deep bruises"]
+  },
+  "persimmon": {
+    "display": "persimmon",
+    "aliases": ["persimmons", "fuyu", "hachiya"],
+    "cues": {
+      "underripe": "hard, pale orange (Hachiya: astringent when hard)",
+      "ripe": "deep orange, slight give (Fuyu eaten firm; Hachiya eaten jelly-soft)",
+      "peak": "Fuyu: firm but ripe. Hachiya: translucent skin, jelly-like",
+      "overripe": "cracks, leaking",
+      "spoiling": "mold, leaking, off smell"
+    },
+    "defects": ["cracks", "black spots", "mold at the calyx"]
+  }
+}
