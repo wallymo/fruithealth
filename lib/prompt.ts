@@ -1,25 +1,20 @@
 import { listFruitKeys } from "./knowledge";
 
-export const IDENTIFY_PROMPT = `You are a produce identifier. Look at the photo and return a structured identification only — do not judge quality or ripeness yet.
+export const IDENTIFY_PROMPT = `You are a produce identifier. Look at the photo and identify the fruit. Do not judge quality or ripeness yet.
 
 Rules:
-- fruit_key must be one of these canonical lowercase keys if possible, else "other": ${listFruitKeys().join(", ")}.
-- If the image is blurry, too small, too dark, partial, or clearly not a fruit/produce item, set not_a_fruit: true and set confidence low.
-- Do not invent detail. If you are not sure, say so with low confidence.
-- Be conservative: "I can't tell" is better than a wrong answer.`;
+- fruit_name: write the specific fruit you actually see, in plain English. Examples: "banana", "navel orange", "Honeycrisp apple", "green grapes", "strawberries in clamshell". Do NOT pick from a list — describe what's in the photo.
+- If the photo is blurry, too small, too dark, partial, or clearly not a fruit/produce item, set not_a_fruit: true and confidence low.
+- Be conservative. "I can't tell" (low confidence) is better than guessing wrong.
+- Do not invent detail. If the fruit is partially visible or ambiguous, say so with lower confidence.`;
 
 export const IDENTIFY_SCHEMA = {
   type: "object",
   properties: {
-    fruit_key: {
+    fruit_name: {
       type: "string",
       description:
-        "Lowercase canonical key from the allowed list, or 'other' if not one of them.",
-    },
-    fruit_display: {
-      type: "string",
-      description:
-        "Specific human-readable name if you can tell, e.g. 'Bartlett pear', 'Hass avocado'.",
+        "Specific human-readable name of the fruit you see, e.g. 'banana', 'Honeycrisp apple', 'navel orange'. Free form — describe what's in the photo.",
     },
     form: {
       type: "string",
@@ -31,9 +26,12 @@ export const IDENTIFY_SCHEMA = {
       description: "0 to 1 — how sure you are of the identification.",
     },
   },
-  required: ["fruit_key", "fruit_display", "form", "not_a_fruit", "confidence"],
+  required: ["fruit_name", "form", "not_a_fruit", "confidence"],
   additionalProperties: false,
 } as const;
+
+// Keep canonical key list accessible for debugging / logging — not shown to the model.
+export const CANONICAL_FRUIT_KEYS = listFruitKeys();
 
 export const JUDGE_PROMPT = `You are FruitHealth, an honest produce shopper. Given a photo of a fruit and a pre-fetched knowledge card for that fruit (ripeness cues + seasonality for the shopper's region and today's date), give a fast, calibrated verdict.
 

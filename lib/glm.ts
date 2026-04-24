@@ -13,6 +13,7 @@ import {
 import type { Form, FruitReport } from "./types";
 
 const MODEL = process.env.GLM_MODEL ?? "glm-5.1";
+const IDENTIFY_MODEL = process.env.GLM_IDENTIFY_MODEL ?? "glm-4.5v";
 const BASE_URL = process.env.GLM_BASE_URL ?? "https://api.z.ai/api/anthropic";
 const IDENTIFY_TOOL = "identify_fruit";
 const REPORT_TOOL = "report_fruit";
@@ -30,12 +31,15 @@ export interface AnalyzeArgs {
   isoDate: string;
 }
 
-interface Identification {
-  fruit_key: string;
-  fruit_display: string;
+interface IdentificationRaw {
+  fruit_name: string;
   form: Form;
   not_a_fruit: boolean;
   confidence: number;
+}
+
+interface Identification extends IdentificationRaw {
+  canonical_key: string | null;
 }
 
 async function identifyFruit(
@@ -43,7 +47,7 @@ async function identifyFruit(
   args: AnalyzeArgs,
 ): Promise<Identification> {
   const resp = await client.messages.create({
-    model: MODEL,
+    model: IDENTIFY_MODEL,
     max_tokens: 256,
     system: IDENTIFY_PROMPT,
     tools: [
@@ -76,7 +80,11 @@ async function identifyFruit(
   if (!toolUse || toolUse.type !== "tool_use") {
     throw new Error("identify: no tool_use block");
   }
-  return toolUse.input as Identification;
+  const raw = toolUse.input as IdentificationRaw;
+  return {
+    ...raw,
+    canonical_key: normalizeFruitKey(raw.fruit_name),
+  };
 }
 
 async function judgeFruit(
@@ -84,18 +92,18 @@ async function judgeFruit(
   args: AnalyzeArgs,
   id: Identification,
 ): Promise<FruitReport> {
-  const normalizedKey =
-    normalizeFruitKey(id.fruit_key) ?? normalizeFruitKey(id.fruit_display);
-  const cueCard = normalizedKey ? formatCueCard(normalizedKey) : null;
-  const season = normalizedKey
-    ? getSeasonality(normalizedKey, args.region, args.isoDate)
+  const cueCard = id.canonical_key ? formatCueCard(id.canonical_key) : null;
+  const season = id.canonical_key
+    ? getSeasonality(id.canonical_key, args.region, args.isoDate)
     : null;
 
   const knowledge = [
     `Today: ${args.isoDate}`,
     `Region: ${args.region}`,
-    `Model's identification: ${id.fruit_display} (canonical key: ${id.fruit_key}, form: ${id.form}, id_confidence: ${id.confidence.toFixed(2)})`,
-    cueCard ? `\nKnowledge card for this fruit:\n${cueCard}` : "\nNo knowledge card available for this fruit — rely on general knowledge but stay conservative.",
+    `Model's identification: ${id.fruit_name} (form: ${id.form}, id_confidence: ${id.confidence.toFixed(2)})`,
+    cueCard
+      ? `\nKnowledge card for this fruit:\n${cueCard}`
+      : "\nNo knowledge card available for this fruit — rely on general knowledge but stay conservative.",
     season
       ? `\nSeasonality for this region this month: ${season.label} (in_season=${season.in_season}).\nUse this as the seasonality note: "${season.note}"`
       : "\nNo seasonality data for this fruit — infer conservatively from the region and date.",
@@ -148,7 +156,7 @@ async function judgeFruit(
 
 function notAFruitReport(id: Identification): FruitReport {
   return {
-    fruit: id.fruit_display || "unknown",
+    fruit: id.fruit_name || "unknown",
     form: id.form ?? "single",
     verdict: "skip",
     confidence: Math.max(id.confidence, 0.9),
