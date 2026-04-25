@@ -78,13 +78,55 @@ async function identifyFruit(
 
   const toolUse = resp.content.find((b) => b.type === "tool_use");
   if (!toolUse || toolUse.type !== "tool_use") {
-    throw new Error("identify: no tool_use block");
+    const text = resp.content.find((b) => b.type === "text");
+    throw new Error(
+      `identify: no tool_use block. text=${
+        text && text.type === "text" ? text.text.slice(0, 200) : "(none)"
+      }`,
+    );
   }
-  const raw = toolUse.input as IdentificationRaw;
+  const input = (toolUse.input ?? {}) as Record<string, unknown>;
+
+  // GLM sometimes deviates from the schema — accept common alternates and
+  // recover gracefully so a missing field never crashes the route.
+  const fruit_name =
+    pickString(input, [
+      "fruit_name",
+      "fruit",
+      "fruit_display",
+      "name",
+      "fruit_key",
+    ]) ?? "";
+  const formRaw = pickString(input, ["form", "type", "presentation"]) ?? "single";
+  const form: Form =
+    formRaw === "bunch" || formRaw === "package" ? formRaw : "single";
+  const not_a_fruit = Boolean(input.not_a_fruit ?? input.notFruit ?? false);
+  const confidenceRaw = input.confidence;
+  const confidence =
+    typeof confidenceRaw === "number" ? confidenceRaw : fruit_name ? 0.5 : 0.0;
+
+  if (!fruit_name && !not_a_fruit) {
+    console.warn("identify: no fruit_name in tool_use input", input);
+  }
+
   return {
-    ...raw,
-    canonical_key: normalizeFruitKey(raw.fruit_name),
+    fruit_name,
+    form,
+    not_a_fruit: not_a_fruit || !fruit_name,
+    confidence,
+    canonical_key: normalizeFruitKey(fruit_name),
   };
+}
+
+function pickString(
+  obj: Record<string, unknown>,
+  keys: string[],
+): string | null {
+  for (const k of keys) {
+    const v = obj[k];
+    if (typeof v === "string" && v.trim().length > 0) return v;
+  }
+  return null;
 }
 
 async function judgeFruit(
@@ -142,16 +184,76 @@ async function judgeFruit(
 
   const toolUse = resp.content.find((b) => b.type === "tool_use");
   if (!toolUse || toolUse.type !== "tool_use") {
-    throw new Error("judge: no tool_use block");
+    const text = resp.content.find((b) => b.type === "text");
+    throw new Error(
+      `judge: no tool_use block. text=${
+        text && text.type === "text" ? text.text.slice(0, 200) : "(none)"
+      }`,
+    );
   }
-  const report = toolUse.input as FruitReport;
-
-  if (season) {
-    report.seasonality.in_season = season.in_season;
-    if (!report.seasonality.note) report.seasonality.note = season.note;
-  }
+  const report = coerceReport(toolUse.input, id, season);
 
   return report;
+}
+
+function coerceReport(
+  input: unknown,
+  id: Identification,
+  season: ReturnType<typeof getSeasonality>,
+): FruitReport {
+  const o = (input ?? {}) as Record<string, unknown>;
+  const allowedRipe = [
+    "underripe",
+    "ripe",
+    "peak",
+    "overripe",
+    "spoiling",
+  ] as const;
+  const allowedVerdict = ["buy", "skip", "return"] as const;
+  const allowedForm = ["single", "bunch", "package"] as const;
+
+  const verdictRaw = pickString(o, ["verdict"]) ?? "skip";
+  const ripenessRaw = pickString(o, ["ripeness"]) ?? "ripe";
+  const formRaw = pickString(o, ["form"]) ?? id.form;
+
+  const seasonObj = (o.seasonality ?? {}) as Record<string, unknown>;
+  const eatRaw = o.eat_within_days;
+  const notesRaw = o.quality_notes;
+
+  return {
+    fruit:
+      pickString(o, ["fruit", "fruit_name", "fruit_display"]) ??
+      id.fruit_name ??
+      "unknown",
+    form: (allowedForm as readonly string[]).includes(formRaw)
+      ? (formRaw as Form)
+      : id.form,
+    verdict: (allowedVerdict as readonly string[]).includes(verdictRaw)
+      ? (verdictRaw as FruitReport["verdict"])
+      : "skip",
+    confidence:
+      typeof o.confidence === "number" ? o.confidence : id.confidence,
+    headline: pickString(o, ["headline"]) ?? "",
+    ripeness: (allowedRipe as readonly string[]).includes(ripenessRaw)
+      ? (ripenessRaw as FruitReport["ripeness"])
+      : "ripe",
+    quality_notes: Array.isArray(notesRaw)
+      ? notesRaw.filter((x): x is string => typeof x === "string")
+      : [],
+    seasonality: {
+      in_season: season
+        ? season.in_season
+        : Boolean(seasonObj.in_season ?? false),
+      note:
+        (typeof seasonObj.note === "string" ? seasonObj.note : "") ||
+        season?.note ||
+        "",
+    },
+    storage_tips: pickString(o, ["storage_tips"]) ?? "",
+    eat_within_days:
+      typeof eatRaw === "number" && Number.isFinite(eatRaw) ? eatRaw : null,
+    not_a_fruit: Boolean(o.not_a_fruit ?? false),
+  };
 }
 
 function notAFruitReport(id: Identification): FruitReport {

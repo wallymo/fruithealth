@@ -28,8 +28,10 @@ export function listFruitKeys(): string[] {
   return FRUIT_KEYS;
 }
 
-export function normalizeFruitKey(raw: string): string | null {
+export function normalizeFruitKey(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
   const lower = raw.trim().toLowerCase();
+  if (!lower) return null;
   if (cues[lower]) return lower;
   for (const [key, entry] of Object.entries(cues)) {
     if (entry.aliases?.some((a) => a.toLowerCase() === lower)) return key;
