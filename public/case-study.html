@@ -1,0 +1,1074 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FruitHealth — UI Case Study</title>
+  <meta name="description" content="A vibrant, citrus-inspired design system for FruitHealth — designed by [Designer Name].">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Palette — derived from the moodboard */
+      --sun: #FFD93D;
+      --sun-soft: #FFF4B0;
+      --zest: #FF8C42;
+      --zest-soft: #FFE0CC;
+      --berry: #FF5C8A;
+      --berry-soft: #FFD3DF;
+      --leaf: #29C77B;
+      --leaf-soft: #C8F4D8;
+      --cream: #FEF3C7;
+      --pulp: #1F1A14;
+      --pith: #FFFFFF;
+      --rind: #E9E4D7;
+      --ink-2: #5A5246;
+      --ink-3: #8C8273;
+
+      /* Typography */
+      --font-display: "Quicksand", "Candara", "Trebuchet MS", system-ui, sans-serif;
+      --font-body:    "Quicksand", "Candara", "Trebuchet MS", system-ui, sans-serif;
+
+      /* Spacing (4-pt scale) */
+      --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px;
+      --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px;
+
+      /* Radius */
+      --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 24px; --r-pill: 999px;
+
+      /* Elevation */
+      --e-1: 0 1px 2px rgba(31,26,20,.06), 0 1px 1px rgba(31,26,20,.04);
+      --e-2: 0 4px 12px rgba(31,26,20,.08), 0 2px 4px rgba(31,26,20,.04);
+      --e-3: 0 12px 32px rgba(31,26,20,.12), 0 4px 8px rgba(31,26,20,.06);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      font-weight: 400;
+      color: var(--pulp);
+      background: var(--pith);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4 { font-family: var(--font-display); margin: 0; line-height: 1.15; letter-spacing: -0.01em; }
+    h1 { font-weight: 700; font-size: clamp(40px, 6vw, 72px); }
+    h2 { font-weight: 700; font-size: clamp(28px, 3.4vw, 40px); }
+    h3 { font-weight: 600; font-size: clamp(20px, 2vw, 24px); }
+    h4 { font-weight: 600; font-size: 16px; }
+    p  { margin: 0 0 var(--s-4) 0; max-width: 64ch; }
+    small { color: var(--ink-2); }
+
+    a { color: inherit; }
+
+    .wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 var(--s-5); }
+    .narrow { max-width: 760px; margin: 0 auto; padding: 0 var(--s-5); }
+
+    section { padding: var(--s-9) 0; border-top: 1px solid var(--rind); }
+    section:first-of-type { border-top: 0; }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--zest); margin-bottom: var(--s-3);
+    }
+    .lede { font-size: clamp(18px, 1.6vw, 22px); color: var(--ink-2); max-width: 60ch; }
+
+    /* --- HERO --- */
+    .hero {
+      padding: var(--s-9) 0 var(--s-7);
+      background:
+        radial-gradient(circle at 90% 10%, var(--sun-soft) 0, transparent 38%),
+        radial-gradient(circle at 5% 90%, var(--berry-soft) 0, transparent 35%),
+        radial-gradient(circle at 60% 95%, var(--leaf-soft) 0, transparent 30%),
+        var(--cream);
+      border-top: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero h1 { max-width: 14ch; }
+    .hero .eyebrow { color: var(--berry); }
+    .hero-meta {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: var(--s-5); margin-top: var(--s-7);
+      padding-top: var(--s-5); border-top: 1px solid rgba(31,26,20,.1);
+    }
+    .hero-meta dt { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 4px;}
+    .hero-meta dd { margin: 0; font-weight: 600; color: var(--pulp); }
+    .hero-art {
+      position: absolute; right: -40px; top: 60px; width: 320px; height: 320px;
+      pointer-events: none; opacity: .9;
+    }
+    @media (max-width: 760px) { .hero-art { display: none; } }
+
+    /* --- COMPONENT GRIDS --- */
+    .grid {
+      display: grid; gap: var(--s-5);
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    @media (max-width: 760px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--pith); border: 1px solid var(--rind);
+      border-radius: var(--r-lg); padding: var(--s-5);
+    }
+    .card.tinted { background: var(--cream); border-color: transparent; }
+
+    /* Color swatches */
+    .swatch {
+      border-radius: var(--r-md); overflow: hidden;
+      border: 1px solid var(--rind); background: var(--pith);
+    }
+    .swatch .chip { height: 88px; }
+    .swatch .body { padding: var(--s-3) var(--s-4); }
+    .swatch h4 { font-size: 14px; }
+    .swatch code {
+      font-size: 12px; color: var(--ink-2);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .swatch .role { display:block; font-size:11px; color: var(--ink-3); margin-top: 2px;}
+
+    /* Type specimen */
+    .type-row {
+      display: flex; align-items: baseline; gap: var(--s-5);
+      padding: var(--s-4) 0; border-bottom: 1px dashed var(--rind);
+    }
+    .type-row:last-child { border-bottom: 0; }
+    .type-row .label { width: 140px; flex-shrink: 0; font-size: 12px; color: var(--ink-2); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+    .type-row .specimen { flex: 1; }
+    .type-row code { font-size: 11px; color: var(--ink-3); font-family: ui-monospace, monospace; }
+
+    /* Buttons (atom showcase) */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: var(--s-2); padding: 14px 22px; border-radius: var(--r-pill);
+      font-family: var(--font-display); font-weight: 700; font-size: 16px;
+      border: 0; cursor: pointer; transition: transform .12s ease, filter .12s ease;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn-primary    { background: var(--leaf);  color: var(--pith); }
+    .btn-secondary  { background: var(--sun);   color: var(--pulp); }
+    .btn-warning    { background: var(--zest);  color: var(--pith); }
+    .btn-danger     { background: var(--berry); color: var(--pith); }
+    .btn-ghost      { background: transparent; color: var(--pulp); border: 1.5px solid var(--rind); }
+    .btn:hover { filter: saturate(1.1) brightness(1.03); }
+    .btn-row { display: flex; flex-wrap: wrap; gap: var(--s-3); }
+
+    /* Chip */
+    .chip-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: var(--r-pill);
+      font-size: 13px; font-weight: 600;
+      background: var(--rind); color: var(--pulp);
+    }
+    .chip-tag.good { background: var(--leaf-soft); color: #0E6B3E; }
+    .chip-tag.warn { background: var(--zest-soft); color: #8A3A06; }
+    .chip-tag.danger { background: var(--berry-soft); color: #8B1F45; }
+
+    /* Phone mockup frame */
+    .phone {
+      width: 320px; max-width: 100%; aspect-ratio: 9 / 19;
+      background: var(--pulp); border-radius: 38px; padding: 12px;
+      box-shadow: var(--e-3);
+      margin: 0 auto;
+    }
+    .phone-screen {
+      width: 100%; height: 100%;
+      background: var(--cream); border-radius: 28px;
+      overflow: hidden; position: relative;
+      display: flex; flex-direction: column;
+    }
+    .status-bar {
+      height: 28px; padding: 0 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 11px; font-weight: 700; color: var(--pulp);
+    }
+    .app-header {
+      padding: 4px 18px 12px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .app-header h3 { font-size: 22px; }
+    .app-header .meta { font-size: 11px; color: var(--ink-2); display: flex; gap: 12px; }
+    .screen-body { flex: 1; padding: var(--s-4) 18px; overflow: hidden; }
+    .scan-cta {
+      background: var(--leaf); color: var(--pith);
+      padding: 22px; border-radius: var(--r-xl);
+      text-align: center; font-weight: 700; font-size: 18px;
+      box-shadow: 0 12px 24px rgba(41, 199, 123, .35);
+      margin: var(--s-4) 0;
+    }
+    .scan-cta small { display:block; color: rgba(255,255,255,.85); font-weight: 500; margin-top: 6px; font-size: 11px; }
+
+    .verdict-hero {
+      text-align: center; color: var(--pith);
+      padding: 28px 18px 22px; border-radius: var(--r-xl) var(--r-xl) 0 0;
+    }
+    .verdict-hero .v {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: 56px; letter-spacing: -0.02em; line-height: 1;
+    }
+    .verdict-hero .when { font-size: 15px; margin-top: 8px; font-weight: 600; }
+    .verdict-hero .who { font-size: 12px; opacity: .85; margin-top: 4px; }
+
+    .verdict-hero.buy    { background: var(--leaf); }
+    .verdict-hero.skip   { background: var(--zest); }
+    .verdict-hero.return { background: var(--berry); }
+
+    .result-card {
+      background: var(--pith); border-radius: var(--r-xl); overflow: hidden;
+      box-shadow: var(--e-2); margin-top: var(--s-3);
+    }
+    .result-photo {
+      height: 110px; background: var(--leaf-soft);
+      display:flex; align-items:center; justify-content:center;
+      font-size: 56px;
+    }
+    .result-detail { padding: 14px 16px; font-size: 12px; color: var(--ink-2); }
+    .result-detail h4 { font-size: 13px; color: var(--pulp); margin-bottom: 6px; }
+    .result-detail .row { display:flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 10px;}
+    .result-detail .row .chip-tag { font-size: 11px; padding: 4px 10px; }
+    .result-detail ul { margin: 6px 0; padding-left: 18px; color: var(--pulp); font-size: 12px; line-height: 1.5; }
+
+    .empty-illustration {
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+      padding: var(--s-7) 0;
+      text-align: center;
+    }
+    .empty-illustration p { font-size: 13px; color: var(--ink-2); margin-top: var(--s-4); max-width: 22ch; }
+
+    /* History list item */
+    .history-item {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--pith); padding: 10px;
+      border-radius: var(--r-lg); margin-bottom: 8px;
+      box-shadow: var(--e-1);
+    }
+    .history-item .thumb {
+      width: 48px; height: 48px; border-radius: 10px;
+      background: var(--leaf-soft); display: flex; align-items: center; justify-content: center;
+      font-size: 26px; flex-shrink: 0;
+    }
+    .history-item .meta { flex: 1; min-width: 0;}
+    .history-item .meta strong { font-size: 13px; display: block; }
+    .history-item .meta small { font-size: 11px; color: var(--ink-3); }
+    .history-item .verdict-pill {
+      font-size: 11px; font-weight: 700;
+      padding: 4px 10px; border-radius: 999px;
+      color: var(--pith);
+    }
+    .vp-buy { background: var(--leaf); }
+    .vp-skip { background: var(--zest); }
+    .vp-return { background: var(--berry); }
+
+    /* Competitor table */
+    .competitor {
+      display: grid; grid-template-columns: 90px 1fr; gap: var(--s-4);
+      padding: var(--s-5) 0; border-bottom: 1px solid var(--rind);
+    }
+    .competitor:last-child { border-bottom: 0; }
+    .competitor .badge {
+      width: 90px; height: 90px; border-radius: var(--r-lg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 38px; font-weight: 700; color: var(--pith);
+    }
+    .b-yuka { background: linear-gradient(135deg, #1B5E20, #4CAF50); }
+    .b-vivino { background: linear-gradient(135deg, #722F37, #B71C1C); }
+    .b-tgtg { background: linear-gradient(135deg, #00A859, #82C341); }
+    .b-fooducate { background: linear-gradient(135deg, #FF6F00, #FFC107); }
+    .competitor h3 { margin-bottom: var(--s-2); }
+    .competitor .took, .competitor .left {
+      font-size: 13px; padding: var(--s-2) var(--s-3);
+      border-radius: var(--r-sm);
+      margin-top: var(--s-2);
+    }
+    .competitor .took { background: var(--leaf-soft); color: #0E6B3E; }
+    .competitor .left { background: var(--berry-soft); color: #8B1F45; }
+
+    /* Layered atom→molecule→organism diagram */
+    .layers { display: grid; gap: var(--s-3); }
+    .layer-row {
+      display: grid; grid-template-columns: 200px 1fr; align-items: center;
+      gap: var(--s-5); padding: var(--s-4);
+      border-radius: var(--r-lg); border: 1px solid var(--rind);
+    }
+    .layer-row .num {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .layer-row .num span { display: block; font-size: 28px; font-weight: 700; color: var(--zest); margin-top: 2px;}
+    .layer-row .body p { margin: 0; font-size: 14px; color: var(--ink-2); }
+    .layer-row .body strong { display: block; font-size: 16px; color: var(--pulp); margin-bottom: 4px;}
+    .layer-row.atom { background: var(--sun-soft); }
+    .layer-row.mol { background: var(--zest-soft); }
+    .layer-row.org { background: var(--berry-soft); }
+    .layer-row.tpl { background: var(--leaf-soft); }
+    .layer-row.pg { background: var(--cream); }
+
+    /* Spacing scale visual */
+    .spacing-scale { display: flex; align-items: end; gap: var(--s-2); padding: var(--s-4) 0;}
+    .spacing-scale .step { background: var(--leaf); border-radius: 4px; }
+    .spacing-scale .step span { font-size: 10px; color: var(--ink-2); display: block; text-align: center; margin-top: 4px; font-weight: 700;}
+
+    /* Logo lockup */
+    .logo {
+      display: inline-flex; align-items: center; gap: var(--s-2);
+      font-family: var(--font-display); font-weight: 700; font-size: 24px;
+    }
+    .logo-mark {
+      width: 36px; height: 36px; border-radius: 12px;
+      background: var(--leaf); color: var(--pith);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+
+    .quote {
+      border-left: 4px solid var(--zest);
+      padding: var(--s-2) 0 var(--s-2) var(--s-5);
+      font-size: 18px; color: var(--ink-2);
+      font-style: italic;
+      margin: var(--s-5) 0;
+    }
+
+    .principle {
+      padding: var(--s-5);
+      border-radius: var(--r-lg);
+      background: var(--pith);
+      border: 1px solid var(--rind);
+    }
+    .principle-emoji { font-size: 32px; margin-bottom: var(--s-3); }
+    .principle h3 { font-size: 18px; margin-bottom: var(--s-2);}
+    .principle p { font-size: 13px; margin: 0; color: var(--ink-2); }
+
+    footer {
+      background: var(--pulp); color: var(--rind);
+      padding: var(--s-7) 0; text-align: center; font-size: 13px;
+    }
+    footer a { color: var(--sun); }
+
+    /* Tiny utility */
+    .row { display:flex; align-items:center; gap: var(--s-3); }
+    .stack-sm > * + * { margin-top: var(--s-3); }
+    .stack-md > * + * { margin-top: var(--s-5); }
+    .mb-md { margin-bottom: var(--s-5); }
+    .text-center { text-align: center; }
+
+    .pill-list { display:flex; flex-wrap: wrap; gap: 6px; }
+
+    /* Mockup row */
+    .mockup-row {
+      display: grid; gap: var(--s-5);
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      align-items: end;
+      padding: var(--s-5) 0;
+    }
+    .mockup-row figcaption {
+      text-align: center; font-size: 13px; color: var(--ink-2);
+      margin-top: var(--s-3); font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">UI / UX Case Study · Mobile PWA</span>
+    <h1>FruitHealth — a citrus-bright design system for instant produce verdicts.</h1>
+    <p class="lede" style="margin-top: var(--s-5)">
+      A shopper points their phone at a fruit. Two seconds later they see <strong>BUY</strong>, <strong>SKIP</strong>, or <strong>RETURN</strong>. The brief was clean, fun, and trustworthy at-a-glance — a long way from the clinical scoring apps that dominate the category.
+    </p>
+
+    <dl class="hero-meta">
+      <div><dt>Role</dt><dd>UI / Visual Design, Design Systems</dd></div>
+      <div><dt>Designer</dt><dd>[Designer Name]</dd></div>
+      <div><dt>Deliverables</dt><dd>Moodboard · Tokens · Components · Mockups</dd></div>
+      <div><dt>Timeline</dt><dd>1 sprint, end-to-end</dd></div>
+    </dl>
+
+    <svg class="hero-art" viewBox="0 0 240 240" aria-hidden="true">
+      <circle cx="120" cy="120" r="100" fill="#FFD93D"/>
+      <circle cx="120" cy="120" r="92" fill="#FFA726" opacity=".25"/>
+      <g stroke="#FF8C42" stroke-width="2" fill="none" opacity=".7">
+        <path d="M120 30 L120 210 M30 120 L210 120 M55 55 L185 185 M55 185 L185 55"/>
+      </g>
+      <circle cx="120" cy="120" r="20" fill="#FF8C42"/>
+      <path d="M120 100 q-8 -22 -32 -28 q12 18 32 28z" fill="#29C77B"/>
+    </svg>
+  </div>
+</header>
+
+<!-- ============ SNAPSHOT ============ -->
+<section>
+  <div class="wrap">
+    <span class="eyebrow">Snapshot</span>
+    <h2>Three challenges, one design language.</h2>
+
+    <div class="grid grid-3" style="margin-top: var(--s-6)">
+      <div class="card tinted">
+        <h3 style="color: var(--zest)">01 · Trust</h3>
+        <p>An AI verdict has to feel honest, not gimmicky. We needed a visual hierarchy that puts the answer first and the disclaimer near it — never hidden.</p>
+      </div>
+      <div class="card tinted">
+        <h3 style="color: var(--berry)">02 · Speed</h3>
+        <p>Decisions happen at the produce shelf in five seconds. The screen had to be readable from a glance and across glare. No fine print.</p>
+      </div>
+      <div class="card tinted">
+        <h3 style="color: var(--leaf)">03 · Joy</h3>
+        <p>Grocery shopping is mundane. A vibrant, illustrated brand can make a quick utility feel pleasant rather than prescriptive.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE BRIEF ============ -->
+<section>
+  <div class="narrow">
+    <span class="eyebrow">The brief</span>
+    <h2>Snap a fruit. Get a verdict.</h2>
+    <p style="margin-top: var(--s-5)">FruitHealth is a mobile-first PWA. A user takes a photo of a fruit, bunch, or packaged clamshell; an AI service grades ripeness and seasonality and returns one of three actions: <strong>buy it</strong>, <strong>skip it</strong>, or <strong>return it</strong>. Supporting detail — ripeness stage, eat-by window, storage tips, in-season note — sits underneath.</p>
+    <p>The product team had built the back-end and a working but utilitarian front-end. The brief: dress it in a brand that earns repeat opens.</p>
+
+    <blockquote class="quote">
+      "We want it to feel like a friendly farmer's-market stall, not a hospital chart."
+      <br><small>— Product brief, week 1</small>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ============ COMPETITOR AUDIT ============ -->
+<section style="background: var(--cream)">
+  <div class="wrap">
+    <span class="eyebrow">Competitive audit</span>
+    <h2>What the category gets right (and where it leaves room).</h2>
+    <p class="lede" style="margin-top: var(--s-3)">Four scan-and-score apps shaped the direction. The pattern: each is strong on one of clarity, warmth, or hierarchy — none are strong on all three.</p>
+
+    <div style="margin-top: var(--s-6)">
+
+      <div class="competitor">
+        <div class="badge b-yuka">Y</div>
+        <div>
+          <h3>Yuka — food &amp; cosmetics scanner</h3>
+          <p>The category leader for "scan an item, get a score." Excellent at single-glance verdict (a coloured dial 0–100) and an unambiguous green/yellow/orange/red palette.</p>
+          <div class="took"><strong>Took:</strong> the discipline of one big colour-coded answer at the top of the screen. The palette as semantic system, not decoration.</div>
+          <div class="left"><strong>Left:</strong> the tone is clinical — sharp scoring dial, dense nutrition data, very little personality. Feels like a lab report.</div>
+        </div>
+      </div>
+
+      <div class="competitor">
+        <div class="badge b-vivino">V</div>
+        <div>
+          <h3>Vivino — wine ratings via photo</h3>
+          <p>Polished verdict UX with a star rating front and centre and a community review feed below. Photography-led visual style.</p>
+          <div class="took"><strong>Took:</strong> hero photo + verdict + collapsible detail layout. The idea that the photo itself is part of the answer, not a decoration.</div>
+          <div class="left"><strong>Left:</strong> premium, desaturated palette. Reads as aspirational adult — not joyful, and a little intimidating to a casual user.</div>
+        </div>
+      </div>
+
+      <div class="competitor">
+        <div class="badge b-tgtg">T</div>
+        <div>
+          <h3>Too Good To Go — surplus food marketplace</h3>
+          <p>Vibrant green-and-yellow brand, illustrated style, conversational copy. Excellent personality work.</p>
+          <div class="took"><strong>Took:</strong> the warmth. Citrus yellow as a hero colour, illustrative produce iconography, cheerful microcopy.</div>
+          <div class="left"><strong>Left:</strong> dense screens with multiple competing CTAs and overlapping cards. The hierarchy gets lost in the playfulness.</div>
+        </div>
+      </div>
+
+      <div class="competitor">
+        <div class="badge b-fooducate">F</div>
+        <div>
+          <h3>Fooducate — nutrition grading</h3>
+          <p>A→D letter grade as the headline result, friendly tone, photo-based scanning.</p>
+          <div class="took"><strong>Took:</strong> verdict-as-letter — instant, language-neutral, glanceable across a noisy aisle. Confirmation that a single token works better than a sentence.</div>
+          <div class="left"><strong>Left:</strong> aging visual style (heavy gradients, cartoonish character). Feels stuck in 2014 and skews young in a way that loses adults.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card" style="margin-top: var(--s-6); background: var(--pith)">
+      <h3>The gap we're filling</h3>
+      <p style="margin-top: var(--s-3)">As clear as <strong>Yuka</strong>, as warm as <strong>Too Good To Go</strong>, with a verdict-first hierarchy borrowed from <strong>Vivino</strong> and the language-free clarity of <strong>Fooducate</strong>. Citrus colours unify the "fresh produce" semantics with the playful tone — every primary in the system is also a fruit.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MOODBOARD ============ -->
+<section>
+  <div class="wrap">
+    <span class="eyebrow">Moodboard → direction</span>
+    <h2>Reading the board.</h2>
+    <p class="lede" style="margin-top: var(--s-3)">The starting moodboard pulled together three things at once: a literal fruit-photography mood, a citrus-pattern illustration mood, and a vintage-ice-cream-shop type mood. Distilled, three signals stood out.</p>
+
+    <div class="grid grid-3" style="margin-top: var(--s-6)">
+
+      <div class="card">
+        <h4 style="color: var(--zest)">Signal 1</h4>
+        <h3 style="margin: 4px 0 var(--s-3) 0">Citrus is the system, not the accent.</h3>
+        <p style="font-size: 14px; color: var(--ink-2)">Every primary on the board — sun yellow, orange zest, berry pink, leaf green — already maps to a fruit. That's the unlock: the brand palette doubles as the semantic palette. Buy is leaf. Out-of-season is zest. Caution is berry. Cream is the warm ground that lets them sing.</p>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--berry)">Signal 2</h4>
+        <h3 style="margin: 4px 0 var(--s-3) 0">Playful doesn't mean childish.</h3>
+        <p style="font-size: 14px; color: var(--ink-2)">"Ready Set Eat" lockup is rounded, sticker-like, hand-drawn — but the supporting fruit photography is grown-up and editorial. The system has to ride that line: rounded geometry and warm colour, but type and spacing that read as adult-utility, not toy.</p>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--leaf)">Signal 3</h4>
+        <h3 style="margin: 4px 0 var(--s-3) 0">Candara — humanist, friendly, low-contrast.</h3>
+        <p style="font-size: 14px; color: var(--ink-2)">Candara is Microsoft-only and unsafe on the web, so we map to <strong>Quicksand</strong>: a humanist sans with the same rounded terminals and friendly geometry. Three weights — Light for hairline supporting copy, Regular for body, Bold for the verdict moments.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ DESIGN PRINCIPLES ============ -->
+<section style="background: var(--cream)">
+  <div class="wrap">
+    <span class="eyebrow">Principles</span>
+    <h2>Four words, four rules.</h2>
+    <p class="lede" style="margin-top: var(--s-3)">The moodboard's trait words become design rules every screen has to pass.</p>
+
+    <div class="grid grid-4" style="margin-top: var(--s-6)">
+      <div class="principle">
+        <div class="principle-emoji">🍋</div>
+        <h3>Fresh</h3>
+        <p>Lean toward saturated, citrus-bright primaries. Cream over pure white. No grey gradients pretending to be premium.</p>
+      </div>
+      <div class="principle">
+        <div class="principle-emoji">🌶️</div>
+        <h3>Vibrant</h3>
+        <p>Hero colour blocks earn the screen. The verdict band fills the full width and doesn't apologise — saturation is part of the message.</p>
+      </div>
+      <div class="principle">
+        <div class="principle-emoji">🥗</div>
+        <h3>Clean</h3>
+        <p>One primary action per screen. Generous spacing — 24px is the small gap, not the big one. Hierarchy beats density every time.</p>
+      </div>
+      <div class="principle">
+        <div class="principle-emoji">🍓</div>
+        <h3>Playful</h3>
+        <p>Rounded geometry, fruit illustrations as punctuation, conversational microcopy ("Ready to eat", "Take it back"). Never at the cost of clarity.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ATOMIC DESIGN INTRO ============ -->
+<section>
+  <div class="narrow">
+    <span class="eyebrow">Method</span>
+    <h2>Atomic Design — five layers, one direction.</h2>
+    <p style="margin-top: var(--s-5)">The system was built bottom-up using <a href="https://atomicdesign.bradfrost.com" target="_blank" rel="noopener">Brad Frost's Atomic Design</a> framework: starting from the smallest tokens and assembling up to full pages. This makes the system inspectable at every layer — designers and engineers can pick the right zoom level for the work in front of them.</p>
+  </div>
+
+  <div class="wrap" style="margin-top: var(--s-7)">
+    <div class="layers">
+      <div class="layer-row atom">
+        <div class="num">Layer 01<span>Atoms</span></div>
+        <div class="body"><strong>Tokens.</strong> <p>Colors, type styles, spacing scale, radii, shadows, motion. The non-decomposable bits.</p></div>
+      </div>
+      <div class="layer-row mol">
+        <div class="num">Layer 02<span>Molecules</span></div>
+        <div class="body"><strong>Components.</strong> <p>Buttons, chips, inputs, the verdict badge — atoms in the smallest functional combinations.</p></div>
+      </div>
+      <div class="layer-row org">
+        <div class="num">Layer 03<span>Organisms</span></div>
+        <div class="body"><strong>Patterns.</strong> <p>Result hero card, history list item, region picker modal — composed of molecules into recognisable UI.</p></div>
+      </div>
+      <div class="layer-row tpl">
+        <div class="num">Layer 04<span>Templates</span></div>
+        <div class="body"><strong>Layouts.</strong> <p>Where organisms live on a page — capture screen, result screen, history screen, error states.</p></div>
+      </div>
+      <div class="layer-row pg">
+        <div class="num">Layer 05<span>Pages</span></div>
+        <div class="body"><strong>Mockups.</strong> <p>Templates filled with real content — what we ship to engineering.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ATOMS ============ -->
+<section style="background: var(--cream)">
+  <div class="wrap">
+    <span class="eyebrow">Atoms · Layer 01</span>
+    <h2>Tokens.</h2>
+    <p class="lede" style="margin-top: var(--s-3); margin-bottom: var(--s-7)">Every visual decision in the system traces back to one of these.</p>
+
+    <h3 style="margin-bottom: var(--s-4)">Colour</h3>
+    <p style="font-size: 14px; color: var(--ink-2)">Five citrus primaries plus cream and pulp. Each primary has a soft-tint sibling for backgrounds and chips, doubling the palette without adding hues.</p>
+
+    <div class="grid grid-4" style="margin-top: var(--s-5)">
+      <div class="swatch"><div class="chip" style="background: var(--sun)"></div><div class="body"><h4>Sun</h4><code>#FFD93D</code><span class="role">Primary · Highlight</span></div></div>
+      <div class="swatch"><div class="chip" style="background: var(--zest)"></div><div class="body"><h4>Zest</h4><code>#FF8C42</code><span class="role">Skip · Out-of-season</span></div></div>
+      <div class="swatch"><div class="chip" style="background: var(--berry)"></div><div class="body"><h4>Berry</h4><code>#FF5C8A</code><span class="role">Return · Caution</span></div></div>
+      <div class="swatch"><div class="chip" style="background: var(--leaf)"></div><div class="body"><h4>Leaf</h4><code>#29C77B</code><span class="role">Buy · In-season</span></div></div>
+      <div class="swatch"><div class="chip" style="background: var(--cream)"></div><div class="body"><h4>Cream</h4><code>#FEF3C7</code><span class="role">Surface · Ground</span></div></div>
+      <div class="swatch"><div class="chip" style="background: var(--pulp)"></div><div class="body"><h4>Pulp</h4><code>#1F1A14</code><span class="role">Text · Ink</span></div></div>
+      <div class="swatch"><div class="chip" style="background: var(--rind)"></div><div class="body"><h4>Rind</h4><code>#E9E4D7</code><span class="role">Border · Divider</span></div></div>
+      <div class="swatch"><div class="chip" style="background: var(--pith)"></div><div class="body"><h4>Pith</h4><code>#FFFFFF</code><span class="role">Card surface</span></div></div>
+    </div>
+
+    <h3 style="margin: var(--s-7) 0 var(--s-4) 0">Type</h3>
+    <p style="font-size: 14px; color: var(--ink-2)">Quicksand maps Candara's friendly humanist feel to the web. Three weights, six roles, generous line-height.</p>
+
+    <div class="card stack-sm" style="background: var(--pith); margin-top: var(--s-5)">
+      <div class="type-row">
+        <div class="label">Verdict / Display</div>
+        <div class="specimen">
+          <div style="font-size: 56px; font-weight: 700; line-height: 1; letter-spacing: -0.02em">BUY</div>
+          <code>700 · 56px · -2% tracking</code>
+        </div>
+      </div>
+      <div class="type-row">
+        <div class="label">H1 / Page</div>
+        <div class="specimen">
+          <div style="font-size: 32px; font-weight: 700">Ready Set Eat</div>
+          <code>700 · 32px</code>
+        </div>
+      </div>
+      <div class="type-row">
+        <div class="label">H2 / Section</div>
+        <div class="specimen">
+          <div style="font-size: 22px; font-weight: 600">Today's scan</div>
+          <code>600 · 22px</code>
+        </div>
+      </div>
+      <div class="type-row">
+        <div class="label">Body</div>
+        <div class="specimen">
+          <div style="font-size: 16px; font-weight: 400">Firm, deep colour, no visible bruises. Smells lightly floral at the stem.</div>
+          <code>400 · 16px · 1.55 line-height</code>
+        </div>
+      </div>
+      <div class="type-row">
+        <div class="label">Caption / Meta</div>
+        <div class="specimen">
+          <div style="font-size: 13px; font-weight: 500; color: var(--ink-2)">April · Northeast US · shoulder season</div>
+          <code>500 · 13px</code>
+        </div>
+      </div>
+      <div class="type-row">
+        <div class="label">Eyebrow</div>
+        <div class="specimen">
+          <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--zest)">In-season alert</div>
+          <code>700 · 11px · +18% tracking · uppercase</code>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin: var(--s-7) 0 var(--s-4) 0">Spacing</h3>
+    <p style="font-size: 14px; color: var(--ink-2)">A 4-pt scale. The screen breathes — 24 is the <em>small</em> gap, 32 is default, 64 is generous.</p>
+    <div class="card" style="background: var(--pith); margin-top: var(--s-5)">
+      <div class="spacing-scale">
+        <div class="step" style="width: 4px; height: 4px"></div>
+        <div class="step" style="width: 8px; height: 8px"></div>
+        <div class="step" style="width: 12px; height: 12px"></div>
+        <div class="step" style="width: 16px; height: 16px"></div>
+        <div class="step" style="width: 24px; height: 24px"></div>
+        <div class="step" style="width: 32px; height: 32px"></div>
+        <div class="step" style="width: 48px; height: 48px"></div>
+        <div class="step" style="width: 64px; height: 64px"></div>
+        <div class="step" style="width: 96px; height: 96px"></div>
+      </div>
+      <div style="display:flex; gap:var(--s-2); font-size: 11px; font-weight: 700; color: var(--ink-2); margin-top: var(--s-2)">
+        <span style="width:4px">4</span><span style="width:8px">8</span><span style="width:12px">12</span><span style="width:16px">16</span><span style="width:24px">24</span><span style="width:32px">32</span><span style="width:48px">48</span><span style="width:64px">64</span><span style="width:96px">96</span>
+      </div>
+    </div>
+
+    <h3 style="margin: var(--s-7) 0 var(--s-4) 0">Radius &amp; elevation</h3>
+    <div class="grid grid-4" style="margin-top: var(--s-5)">
+      <div class="card" style="background: var(--pith); text-align:center">
+        <div style="height:60px; background: var(--leaf-soft); border-radius: 8px; margin-bottom: 8px"></div>
+        <code>8px · sm · chip</code>
+      </div>
+      <div class="card" style="background: var(--pith); text-align:center">
+        <div style="height:60px; background: var(--zest-soft); border-radius: 16px; margin-bottom: 8px"></div>
+        <code>16px · lg · card</code>
+      </div>
+      <div class="card" style="background: var(--pith); text-align:center">
+        <div style="height:60px; background: var(--berry-soft); border-radius: 24px; margin-bottom: 8px"></div>
+        <code>24px · xl · result</code>
+      </div>
+      <div class="card" style="background: var(--pith); text-align:center">
+        <div style="height:60px; background: var(--sun-soft); border-radius: 999px; margin-bottom: 8px"></div>
+        <code>999px · pill · button</code>
+      </div>
+    </div>
+
+    <h3 style="margin: var(--s-7) 0 var(--s-4) 0">Iconography</h3>
+    <p style="font-size: 14px; color: var(--ink-2)">Two parallel families. Functional icons (chevrons, camera, history) use a <strong>1.5px stroke, 24px grid</strong> for clarity at thumb-tip size. Brand icons (the fruits themselves) use <strong>flat-fill illustrations</strong> with a 2-tone shadow, big enough to read as decoration.</p>
+    <div class="card" style="background: var(--pith); margin-top: var(--s-5); display:flex; align-items:center; gap: var(--s-6); flex-wrap: wrap">
+      <svg width="48" height="48" viewBox="0 0 100 100"><circle cx="50" cy="55" r="32" fill="#FFD93D"/><circle cx="50" cy="55" r="32" fill="none" stroke="#E5B800" stroke-width="2"/><path d="M50 23 q-4 -8 -12 -10 q4 8 12 10z" fill="#29C77B"/></svg>
+      <svg width="48" height="48" viewBox="0 0 100 100"><path d="M30 35 q15 -25 40 -10 q12 35 -15 50 q-30 8 -25 -40z" fill="#FFD93D"/><path d="M68 32 q8 -10 4 -20" stroke="#29C77B" stroke-width="3" fill="none"/></svg>
+      <svg width="48" height="48" viewBox="0 0 100 100"><path d="M50 25 q20 0 22 24 q0 26 -22 36 q-22 -10 -22 -36 q2 -24 22 -24z" fill="#FF5C8A"/><circle cx="42" cy="55" r="2" fill="#FFD93D"/><circle cx="55" cy="60" r="2" fill="#FFD93D"/><circle cx="48" cy="70" r="2" fill="#FFD93D"/><path d="M50 25 q-3 -8 -6 -10 M50 25 q3 -8 6 -10" stroke="#29C77B" stroke-width="3" fill="none"/></svg>
+      <svg width="48" height="48" viewBox="0 0 100 100"><circle cx="50" cy="55" r="34" fill="#29C77B"/><circle cx="50" cy="55" r="28" fill="#FF5C8A" opacity=".25"/><path d="M50 23 q-3 -6 -8 -8 q3 6 8 8z" fill="#1F1A14"/></svg>
+
+      <span style="margin-left: auto; color: var(--ink-3); font-size: 12px">Functional icons →</span>
+
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F1A14" stroke-width="1.5" stroke-linecap="round"><path d="M4 7l5-3 6 3 5-2v15l-5 2-6-3-5 3z"/><path d="M9 4v15M15 7v15"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F1A14" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="13" r="4"/><path d="M5 8h3l1.5-2h5L16 8h3v11H5z"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F1A14" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ MOLECULES ============ -->
+<section>
+  <div class="wrap">
+    <span class="eyebrow">Molecules · Layer 02</span>
+    <h2>Components.</h2>
+    <p class="lede" style="margin-top: var(--s-3); margin-bottom: var(--s-7)">Atoms become useful when they pair up. These are the smallest things a user actually clicks, reads, or scans.</p>
+
+    <h3 style="margin-bottom: var(--s-4)">Buttons</h3>
+    <p style="font-size: 14px; color: var(--ink-2)">Pill radius — soft, friendly, citrus-shaped. One primary per screen.</p>
+    <div class="card" style="background: var(--cream); margin-top: var(--s-5)">
+      <div class="btn-row">
+        <button class="btn btn-primary">Scan fruit</button>
+        <button class="btn btn-secondary">Choose region</button>
+        <button class="btn btn-warning">Skip</button>
+        <button class="btn btn-danger">Return it</button>
+        <button class="btn btn-ghost">Cancel</button>
+      </div>
+    </div>
+
+    <h3 style="margin: var(--s-7) 0 var(--s-4) 0">Chips</h3>
+    <p style="font-size: 14px; color: var(--ink-2)">Same hue family as their parent verdict, half the saturation. Used for ripeness, in-season, eat-by.</p>
+    <div class="card" style="background: var(--cream); margin-top: var(--s-5)">
+      <div class="pill-list">
+        <span class="chip-tag">Ripeness · Peak</span>
+        <span class="chip-tag good">🟢 In season</span>
+        <span class="chip-tag warn">🟡 Out of season</span>
+        <span class="chip-tag danger">🔴 Spoiling</span>
+        <span class="chip-tag">Eat within 3 days</span>
+      </div>
+    </div>
+
+    <h3 style="margin: var(--s-7) 0 var(--s-4) 0">The verdict badge</h3>
+    <p style="font-size: 14px; color: var(--ink-2)">The system's hero molecule. Full-bleed colour, 56px verdict, plain-language eat-when line, fruit + ripeness as a small subtitle. Three colour states, one shape.</p>
+
+    <div class="grid grid-3" style="margin-top: var(--s-5)">
+      <div class="result-card">
+        <div class="verdict-hero buy">
+          <div class="v">BUY</div>
+          <div class="when">Ripe — eat within 3 days.</div>
+          <div class="who">Honeycrisp apple · Ripe</div>
+        </div>
+      </div>
+      <div class="result-card">
+        <div class="verdict-hero skip">
+          <div class="v">SKIP</div>
+          <div class="when">Not ripe yet — needs 3 days at home.</div>
+          <div class="who">Bartlett pear · Underripe</div>
+        </div>
+      </div>
+      <div class="result-card">
+        <div class="verdict-hero return">
+          <div class="v">RETURN</div>
+          <div class="when">Don't eat — take it back.</div>
+          <div class="who">Strawberry clamshell · Spoiling</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ORGANISMS ============ -->
+<section style="background: var(--cream)">
+  <div class="wrap">
+    <span class="eyebrow">Organisms · Layer 03</span>
+    <h2>Patterns.</h2>
+    <p class="lede" style="margin-top: var(--s-3); margin-bottom: var(--s-7)">Composed of molecules. These are the recognisable units a user moves through.</p>
+
+    <div class="grid grid-2">
+      <div>
+        <h3>Result hero card</h3>
+        <p style="font-size: 14px; color: var(--ink-2)">Verdict badge → photo → headline → quality notes → seasonality note → storage tip → AI disclaimer. Strict vertical hierarchy: the answer is always the first thing read; uncertainty calibration is always the last thing read.</p>
+        <div class="result-card" style="margin-top: var(--s-5)">
+          <div class="verdict-hero buy">
+            <div class="v">BUY</div>
+            <div class="when">Ripe — eat within 3 days.</div>
+            <div class="who">Honeycrisp apple · Ripe</div>
+          </div>
+          <div class="result-photo">🍎</div>
+          <div class="result-detail">
+            <h4>Firm, deep red, no visible bruises.</h4>
+            <ul>
+              <li>Even color through the shoulders</li>
+              <li>Stem is fresh, not dried out</li>
+              <li>Faintly floral aroma at the stem</li>
+            </ul>
+            <p style="margin: 8px 0 0 0">🟢 April is the shoulder of apple season in Northeast US — quality varies.</p>
+            <p style="margin-top: 6px; color: var(--ink-3); font-size: 11px;">AI estimate · trust your eyes. Confidence 84%.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3>History list item</h3>
+        <p style="font-size: 14px; color: var(--ink-2)">Compact, scannable. Thumbnail · fruit · headline · timestamp · verdict pill. The verdict pill always sits in the same spot — the eye learns it on the first scan.</p>
+        <div class="card" style="background: var(--pith); margin-top: var(--s-5); border: 1px solid var(--rind)">
+          <div class="history-item" style="box-shadow: none">
+            <div class="thumb">🍌</div>
+            <div class="meta"><strong>Banana bunch</strong><small>Peak ripe · 2 hrs ago</small></div>
+            <span class="verdict-pill vp-buy">BUY</span>
+          </div>
+          <div class="history-item" style="box-shadow: none">
+            <div class="thumb" style="background: var(--zest-soft)">🍐</div>
+            <div class="meta"><strong>Bartlett pear</strong><small>Underripe · yesterday</small></div>
+            <span class="verdict-pill vp-skip">SKIP</span>
+          </div>
+          <div class="history-item" style="box-shadow: none">
+            <div class="thumb" style="background: var(--berry-soft)">🍓</div>
+            <div class="meta"><strong>Strawberry clamshell</strong><small>Mold visible · 3 days ago</small></div>
+            <span class="verdict-pill vp-return">RETURN</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MOCKUPS ============ -->
+<section>
+  <div class="wrap">
+    <span class="eyebrow">Pages · Layer 05</span>
+    <h2>The system in context.</h2>
+    <p class="lede" style="margin-top: var(--s-3); margin-bottom: var(--s-7)">Templates filled with real content. Every screen below is built only from the atoms and molecules above.</p>
+
+    <div class="mockup-row">
+
+      <!-- Empty home -->
+      <figure>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="status-bar"><span>9:41</span><span>●●●●</span></div>
+            <div class="app-header">
+              <div class="logo"><span class="logo-mark">🍋</span> FruitHealth</div>
+            </div>
+            <div class="app-header" style="padding-top: 0">
+              <div class="meta"><span>Northeast US</span><span>History</span></div>
+            </div>
+            <div class="screen-body" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center">
+              <svg width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="55" r="32" fill="#FFD93D"/><circle cx="50" cy="55" r="32" fill="none" stroke="#E5B800" stroke-width="2"/><path d="M50 23 q-4 -8 -12 -10 q4 8 12 10z" fill="#29C77B"/></svg>
+              <div style="font-weight:700; font-size: 17px; margin-top: var(--s-4)">Ready Set Eat</div>
+              <div style="font-size: 12px; color: var(--ink-2); margin-top: 6px; max-width: 22ch">Snap a fruit, bunch, or package. Get an instant verdict.</div>
+              <div class="scan-cta" style="margin-top: var(--s-5); width: 100%">
+                Scan fruit
+                <small>Take photo or pick from library</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption>01 · Empty home</figcaption>
+      </figure>
+
+      <!-- Result BUY -->
+      <figure>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="status-bar"><span>9:42</span><span>●●●●</span></div>
+            <div class="app-header">
+              <div class="logo" style="font-size: 18px"><span class="logo-mark" style="width: 28px; height: 28px; font-size: 16px">🍋</span> FruitHealth</div>
+              <div class="meta"><span>NE US</span></div>
+            </div>
+            <div class="screen-body" style="padding: 0 12px">
+              <div class="result-card" style="border-radius: 18px">
+                <div class="verdict-hero buy" style="border-radius: 18px 18px 0 0; padding: 20px 14px 16px">
+                  <div class="v" style="font-size: 42px">BUY</div>
+                  <div class="when" style="font-size: 13px">Ripe — eat within 3 days.</div>
+                  <div class="who" style="font-size: 11px">Honeycrisp apple · Ripe</div>
+                </div>
+                <div class="result-photo" style="height: 84px; font-size: 38px">🍎</div>
+                <div class="result-detail" style="padding: 10px 12px; font-size: 11px">
+                  <h4 style="font-size: 12px">Firm, deep red, no bruises.</h4>
+                  <ul style="font-size: 10px; padding-left: 14px"><li>Even color, fresh stem</li><li>Faint floral aroma</li></ul>
+                  <p style="margin: 6px 0 0 0; font-size: 10px">🟢 April · shoulder season in NE US.</p>
+                  <p style="font-size: 9px; color: var(--ink-3); margin-top: 4px">AI estimate · 84% confidence</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption>02 · Result · Buy</figcaption>
+      </figure>
+
+      <!-- Result RETURN -->
+      <figure>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="status-bar"><span>9:43</span><span>●●●●</span></div>
+            <div class="app-header">
+              <div class="logo" style="font-size: 18px"><span class="logo-mark" style="width: 28px; height: 28px; font-size: 16px">🍋</span> FruitHealth</div>
+              <div class="meta"><span>NE US</span></div>
+            </div>
+            <div class="screen-body" style="padding: 0 12px">
+              <div class="result-card" style="border-radius: 18px">
+                <div class="verdict-hero return" style="border-radius: 18px 18px 0 0; padding: 20px 14px 16px">
+                  <div class="v" style="font-size: 42px">RETURN</div>
+                  <div class="when" style="font-size: 13px">Don't eat — take it back.</div>
+                  <div class="who" style="font-size: 11px">Strawberry clamshell · Spoiling</div>
+                </div>
+                <div class="result-photo" style="height: 84px; background: var(--berry-soft); font-size: 38px">🍓</div>
+                <div class="result-detail" style="padding: 10px 12px; font-size: 11px">
+                  <h4 style="font-size: 12px">White mold visible at the back of the clamshell.</h4>
+                  <ul style="font-size: 10px; padding-left: 14px">
+                    <li>Mold on at least 3 berries</li>
+                    <li>Bleeding juice in the package</li>
+                    <li>Fermented smell</li>
+                  </ul>
+                  <p style="font-size: 9px; color: var(--ink-3); margin-top: 4px">AI estimate · 92% confidence</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption>03 · Result · Return</figcaption>
+      </figure>
+
+      <!-- History -->
+      <figure>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="status-bar"><span>9:44</span><span>●●●●</span></div>
+            <div class="app-header">
+              <div class="logo" style="font-size: 18px"><span class="logo-mark" style="width: 28px; height: 28px; font-size: 16px">🍋</span> History</div>
+              <div class="meta"><span>← Home</span></div>
+            </div>
+            <div class="screen-body">
+              <div class="history-item">
+                <div class="thumb">🍎</div>
+                <div class="meta"><strong style="font-size: 12px">Honeycrisp apple</strong><small>Ripe · 2 hrs ago</small></div>
+                <span class="verdict-pill vp-buy">BUY</span>
+              </div>
+              <div class="history-item">
+                <div class="thumb" style="background: var(--sun-soft)">🍌</div>
+                <div class="meta"><strong style="font-size: 12px">Banana bunch</strong><small>Peak · today</small></div>
+                <span class="verdict-pill vp-buy">BUY</span>
+              </div>
+              <div class="history-item">
+                <div class="thumb" style="background: var(--zest-soft)">🍐</div>
+                <div class="meta"><strong style="font-size: 12px">Bartlett pear</strong><small>Underripe · yest.</small></div>
+                <span class="verdict-pill vp-skip">SKIP</span>
+              </div>
+              <div class="history-item">
+                <div class="thumb" style="background: var(--berry-soft)">🍓</div>
+                <div class="meta"><strong style="font-size: 12px">Strawberries</strong><small>Mold · 3d ago</small></div>
+                <span class="verdict-pill vp-return">RETURN</span>
+              </div>
+              <div class="history-item">
+                <div class="thumb" style="background: var(--leaf-soft)">🥑</div>
+                <div class="meta"><strong style="font-size: 12px">Hass avocado</strong><small>Ripe · 4d ago</small></div>
+                <span class="verdict-pill vp-buy">BUY</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption>04 · History</figcaption>
+      </figure>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ ERROR / EDGE CASES ============ -->
+<section style="background: var(--cream)">
+  <div class="wrap">
+    <span class="eyebrow">Edge cases</span>
+    <h2>Designing for when things go wrong.</h2>
+    <p class="lede" style="margin-top: var(--s-3); margin-bottom: var(--s-7)">A photo can be too dark, too small, or not a fruit at all. The system handles these without breaking tone — friendly, specific, never blaming the user.</p>
+
+    <div class="grid grid-3">
+      <div class="card">
+        <h4 style="color: var(--zest); margin-bottom: var(--s-3)">Too dark</h4>
+        <div class="phone" style="width: 220px">
+          <div class="phone-screen" style="background: var(--cream)">
+            <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+            <div class="screen-body" style="display:flex; flex-direction:column; justify-content:center; text-align:center">
+              <div style="font-size: 56px; margin-bottom: var(--s-3)">🌙</div>
+              <strong style="font-size: 14px">Too dark to read.</strong>
+              <p style="font-size: 11px; color: var(--ink-2); margin-top: 4px">Try again with more light.</p>
+              <div class="btn btn-primary" style="margin: var(--s-4) auto 0; padding: 8px 18px; font-size: 12px">Retake</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--berry); margin-bottom: var(--s-3)">Not a fruit</h4>
+        <div class="phone" style="width: 220px">
+          <div class="phone-screen" style="background: var(--cream)">
+            <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+            <div class="screen-body" style="display:flex; flex-direction:column; justify-content:center; text-align:center">
+              <div style="font-size: 56px; margin-bottom: var(--s-3)">🤔</div>
+              <strong style="font-size: 14px">Couldn't make out a fruit.</strong>
+              <p style="font-size: 11px; color: var(--ink-2); margin-top: 4px">Move closer and try again.</p>
+              <div class="btn btn-primary" style="margin: var(--s-4) auto 0; padding: 8px 18px; font-size: 12px">Retake</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--leaf); margin-bottom: var(--s-3)">First run</h4>
+        <div class="phone" style="width: 220px">
+          <div class="phone-screen" style="background: var(--cream)">
+            <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+            <div class="screen-body" style="display:flex; flex-direction:column; justify-content:center; text-align:center">
+              <div style="font-size: 56px; margin-bottom: var(--s-3)">📍</div>
+              <strong style="font-size: 14px">Where are you shopping?</strong>
+              <p style="font-size: 11px; color: var(--ink-2); margin-top: 4px">We use it to judge seasonality.</p>
+              <div style="background: var(--pith); border-radius: 10px; padding: 8px 12px; margin: var(--s-4) auto 0; font-size: 11px; text-align: left; box-shadow: var(--e-1)">Northeast US ⌄</div>
+              <div class="btn btn-primary" style="margin: var(--s-3) auto 0; padding: 8px 18px; font-size: 12px">Save</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ NEXT STEPS ============ -->
+<section>
+  <div class="narrow">
+    <span class="eyebrow">What's next</span>
+    <h2>Where the system goes from here.</h2>
+    <ul style="font-size: 16px; color: var(--ink-2); padding-left: 20px">
+      <li style="margin-bottom: var(--s-3)"><strong style="color: var(--pulp)">Motion tokens.</strong> A spring curve for the verdict reveal — colour fills from the photo outward, 320ms. Subtle but characterful.</li>
+      <li style="margin-bottom: var(--s-3)"><strong style="color: var(--pulp)">Dark mode.</strong> Pulp becomes the ground; cream becomes a chip background. The five citrus primaries hold their meaning at lower luminance — they were chosen for that.</li>
+      <li style="margin-bottom: var(--s-3)"><strong style="color: var(--pulp)">Illustrated fruit set.</strong> A consistent illustration kit for the top 30 fruits in the knowledge base. Used in history thumbnails and empty states. Single style guide so the team can extend it.</li>
+      <li style="margin-bottom: var(--s-3)"><strong style="color: var(--pulp)">Accessibility audit.</strong> Verdict colours need a 4.5:1 contrast pair against white text. Berry passes; zest needs a darker pulp text override which is already in the system.</li>
+      <li style="margin-bottom: var(--s-3)"><strong style="color: var(--pulp)">Token export.</strong> JSON token file (Style Dictionary) so engineers consume the same source as design — no more "is this colour right?" Slack threads.</li>
+    </ul>
+
+    <div class="card tinted" style="margin-top: var(--s-6)">
+      <h3>Reflection</h3>
+      <p style="margin-top: var(--s-3); color: var(--ink-2)">The discipline that paid off most: refusing to add a sixth colour. Five primaries, two neutrals. Every chip, button, illustration, and chart had to compose from those — and that constraint is what makes the system feel like a system, not a colour-picker session. The moodboard already had the answer; the work was trusting it.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p style="margin: 0">FruitHealth · UI case study · Designed by [Designer Name] · 2026</p>
+    <p style="margin-top: var(--s-2); color: var(--ink-3); font-size: 12px">Built with Atomic Design · Quicksand on the web · Candara on Windows</p>
+  </div>
+</footer>
+
+</body>
+</html>
